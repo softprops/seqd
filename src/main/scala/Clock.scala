@@ -5,8 +5,10 @@ trait Clock {
 }
 
 object Clock {
-  val default: Clock =
+  def apply(gen: => Long): Clock =
     new Clock {
-      def apply() = System.currentTimeMillis
+      def apply() = gen
     }
+  val default: Clock =
+    apply(System.currentTimeMillis)
 }
