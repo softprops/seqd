@@ -19,20 +19,20 @@ object Generator {
    (twepoch: Long      = defaultTwepoch,
     workerId: Long     = 0,
     datacenterId: Long = 0,
-    lastTs: Long       = -1,
+    prev: State        = State(-1, 0),
     clock: Clock       = Clock.default): Either[String, Generator] =
     if (workerId > maxWorkerId || workerId < 0)
       Left(s"worker Id can't be greater than $maxWorkerId or less than 0")
     else if (datacenterId > maxDatacenterId || datacenterId < 0)
       Left(s"datacenter Id can't be greater than $maxDatacenterId or less than 0")
     else
-      Right(new Generator(twepoch, workerId, datacenterId, lastTs, clock))
+      Right(new Generator(twepoch, workerId, datacenterId, prev, clock))
 }
 
 class Generator private[seqd]
- (twepoch: Long, workerId: Long, datacenterId: Long, lastTs: Long, clock: Clock) {
+ (twepoch: Long, workerId: Long, datacenterId: Long, prev: Generator.State, clock: Clock) {
   import Generator._
-  private[this] var state = State(lastTs, 0L)
+  private[this] var state = prev
 
   def next(): Either[String, Long] = synchronized {
     var timestamp = clock()
