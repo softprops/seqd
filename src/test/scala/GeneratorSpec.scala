@@ -40,5 +40,16 @@ class GeneratorSpec extends FunSpec {
          gen.next().right.map { case Generator.Id(_, _, _, seq) => assert(seq === 2) }
        })
     }
+
+    it ("should permit the use of a custom twepoch") {
+      val twepoch = System.currentTimeMillis
+      val frozen = new Clock {
+        val apply = System.currentTimeMillis
+      }
+      Generator(twepoch = twepoch, clock = frozen)
+        .fold(fail(_), { gen =>
+          gen.next().right.map { case Generator.Id(ts, _, _, _) => assert(ts == (frozen.apply - twepoch)) }
+        })
+    }
   }
 }
