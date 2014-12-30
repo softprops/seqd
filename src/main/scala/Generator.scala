@@ -8,9 +8,9 @@ object Generator {
 
     def unapply(l: Long): Option[(Long, Long, Long, Long)] =
       Some(
-       (l & timestampMask) >> 22,
-       (l & datacenterMask) >> 17,
-       (l & workerMask) >> 12,
+       (l & timestampMask) >> timestampLeftShift,
+       (l & datacenterMask) >> datacenterIdShift,
+       (l & workerMask) >> workerIdShift,
         l & sequenceMask)
   }
 
