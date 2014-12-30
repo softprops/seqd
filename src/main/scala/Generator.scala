@@ -42,7 +42,11 @@ object Generator {
 }
 
 class Generator private[seqd]
- (twepoch: Long, workerId: Long, datacenterId: Long, prev: Generator.State, clock: Clock) {
+ (twepoch: Long,
+  workerId: Long,
+  datacenterId: Long,
+  prev: Generator.State,
+  clock: Clock) {
   import Generator._
   private[this] var state = prev
 
