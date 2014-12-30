@@ -50,7 +50,7 @@ class GeneratorSpec extends FunSpec {
       }
       Generator(twepoch = twepoch, clock = frozen)
         .fold(fail(_), { gen =>
-          gen.next().right.map { case Generator.Id(ts, _, _, _) => assert(ts == (frozen.apply - twepoch)) }
+          gen.next().right.foreach { case Generator.Id(ts, _, _, _) => assert(ts == (frozen.apply - twepoch)) }
         })
     }
   }
