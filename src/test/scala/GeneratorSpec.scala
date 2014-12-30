@@ -1,6 +1,7 @@
 package seqd
 
 import org.scalatest.FunSpec
+import scala.util.Right
 
 class GeneratorSpec extends FunSpec {
   describe("Generator") {
@@ -35,9 +36,10 @@ class GeneratorSpec extends FunSpec {
       }
       Generator(clock = frozen)
        .fold(fail(_), { gen =>
-         gen.next().right.map { case Generator.Id(_, _, _, seq) => assert(seq === 0) }
-         gen.next().right.map { case Generator.Id(_, _, _, seq) => assert(seq === 1) }
-         gen.next().right.map { case Generator.Id(_, _, _, seq) => assert(seq === 2) }
+         def index() = gen.next().right.map { case Generator.Id(_, _, _, seq) => seq }
+         (0 to 10).foreach { idx =>
+           assert(index() == Right(idx))
+         }
        })
     }
 
