@@ -1,7 +1,19 @@
 package seqd
 
 object Generator {
-  case class State(lts: Long, seq: Long)
+  case class State(lts: Long, seq: Long) {
+    def next(timestamp: Long, tick: => Long): State =
+      if (lts == timestamp)
+        ((seq + 1) & sequenceMask) match {
+          case 0  =>
+            @annotation.tailrec
+            def wind(ts: Long): Long =
+              if (ts > lts) ts else wind(tick)
+            State(wind(timestamp), 0L)
+          case s  =>
+            State(timestamp, s)
+        } else State(timestamp, 0L)
+  }
 
   val defaultTwepoch = 1288834974657L // Tue, 21 Mar 2006 20:50:14.000 GMT
 
@@ -39,16 +51,7 @@ class Generator private[seqd]
     if (timestamp < state.lts)
       Left(s"clock is moving backwards. Refusing to generate id for ${state.lts - timestamp} milliseconds")
     else {
-      state = if (state.lts == timestamp)
-        ((state.seq + 1) & sequenceMask) match {
-          case 0  =>
-            @annotation.tailrec
-            def tick(ts: Long): Long =
-              if (ts > state.lts) ts else tick(clock())
-            State(tick(timestamp), 0L)
-          case s  =>
-            State(timestamp, s)
-        } else State(timestamp, 0L)
+      state = state.next(timestamp, clock())
       Right(
        ((state.lts - twepoch) << timestampLeftShift)
         | (datacenterId << datacenterIdShift)
