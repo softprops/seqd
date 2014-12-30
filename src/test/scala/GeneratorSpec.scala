@@ -35,8 +35,9 @@ class GeneratorSpec extends FunSpec {
       }
       Generator(clock = frozen)
        .fold(fail(_), { gen =>
-         println(gen.next())
-         println(gen.next())
+         gen.next().right.map { case Generator.Id(_, _, _, seq) => assert(seq === 0) }
+         gen.next().right.map { case Generator.Id(_, _, _, seq) => assert(seq === 1) }
+         gen.next().right.map { case Generator.Id(_, _, _, seq) => assert(seq === 2) }
        })
     }
   }
