@@ -2,9 +2,9 @@ package seqd
 
 object Generator {
   object Id {
-    private val workerMask     = 0x000000000001F000L
-    private val datacenterMask = 0x00000000003E0000L
-    private val timestampMask  = 0xFFFFFFFFFFC00000L
+    private[this] val workerMask     = 0x000000000001F000L
+    private[this] val datacenterMask = 0x00000000003E0000L
+    private[this] val timestampMask  = 0xFFFFFFFFFFC00000L
 
     def unapply(l: Long): Option[(Long, Long, Long, Long)] =
       Some(
