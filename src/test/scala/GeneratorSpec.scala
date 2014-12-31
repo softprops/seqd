@@ -53,5 +53,19 @@ class GeneratorSpec extends FunSpec {
           gen.next().right.foreach { case Generator.Id(ts, _, _, _) => assert(ts == (frozen.apply - twepoch)) }
         })
     }
+
+    it ("generate many ids quickly") {
+      Generator()
+        .fold(fail(_), { gen =>
+          val t = System.currentTimeMillis
+          for (i <- 1 to 1000000) {
+            gen.next()
+          }
+          val t2 = System.currentTimeMillis
+          val elapsed = t2 - t
+          println("generated 1000000 ids in %d ms, or %,.0f ids/second".format(elapsed, 1000000000.0/ elapsed))
+          assert(elapsed < 300)
+        })
+    }
   }
 }
