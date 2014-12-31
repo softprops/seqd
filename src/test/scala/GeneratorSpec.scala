@@ -54,7 +54,7 @@ class GeneratorSpec extends FunSpec {
         })
     }
 
-    it ("generate many ids quickly") {
+    it ("should generate many ids quickly") {
       Generator()
         .fold(fail(_), { gen =>
           val t = System.currentTimeMillis
@@ -65,6 +65,18 @@ class GeneratorSpec extends FunSpec {
           val elapsed = t2 - t
           println("generated 1000000 ids in %d ms, or %,.0f ids/second".format(elapsed, 1000000000.0/ elapsed))
           assert(elapsed < 300)
+        })
+    }
+
+    it ("should generate only unique ids") {
+      Generator()
+        .fold(fail(_), { gen =>
+          val n = 2000000
+          var set = new scala.collection.mutable.HashSet[Long]()
+          (1 to n).foreach { i =>
+            gen.next().right.foreach(set +=)
+          }
+          assert(set.size === n)
         })
     }
   }
