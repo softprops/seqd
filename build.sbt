@@ -1,10 +1,16 @@
-organization := "me.lessis"
+organization in ThisBuild := "me.lessis"
 
-name := "seqd"
+version in ThisBuild := "0.1.0-SNAPSHOT"
 
-version := "0.1.0-SNAPSHOT"
-
-description := "fault-tolerant generator of sequenced unique numbers"
-
-libraryDependencies +=
+libraryDependencies in ThisBuild +=
   "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+
+publishArtifact := false
+
+publish := {}
+
+lazy val seqd = project.in(file(".")).aggregate(`seqd-core`, `seqd-netty`)
+
+lazy val `seqd-core` = project 
+
+lazy val `seqd-netty` = project.dependsOn(`seqd-core`)
